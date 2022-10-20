@@ -16,7 +16,7 @@ templ_orig = templ.copy()
 
 n = 8000#number of points to choose
 
-niter = 100
+niter = 10
 for i in range(niter):
     #scan_short = random.choices(scan.points, k=n)
     scan_short = scan.extract_feature_edges(boundary_edges=False).points
@@ -40,7 +40,7 @@ for i in range(niter):
         H = np.add(H,np.outer(y_y0[idx] , x_x0[idx]))
     [U, D, Vt] = np.linalg.svd(H)
     R = np.dot(np.transpose(Vt), np.transpose(U))
-    R = np.dot(R,R.T)
+    #R = np.dot(R,R.T)
     # print(np.linalg.det(R))
     #R = np.matmul(U, Vt)
     #R = np.matmul(R,np.transpose(R))

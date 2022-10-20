@@ -1,0 +1,7 @@
+data/scan_noisy.obj
+data/scan_posed.obj
+data/scan_transformed.obj
+data/Scan00.png
+data/template.mtl
+data/template.obj
+.DS_Store
