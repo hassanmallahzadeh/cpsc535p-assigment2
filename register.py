@@ -19,10 +19,11 @@ n = 8000#number of points to choose
 niter = 10
 for i in range(niter):
     #scan_short = random.choices(scan.points, k=n)
-    scan_short = scan.extract_feature_edges(boundary_edges=False).points
+    #scan_short = scan.extract_feature_edges(boundary_edges=False).points
+    scan_short = scan.points
     tree = KDTree(templ.points.astype(np.double))
-    y0 = np.sum(scan.points,axis=0)/scan.points.shape[0]
-    x0 = np.sum(templ.points,axis=0)/templ.points.shape[0]
+    # y0 = np.sum(scan.points,axis=0)/scan.points.shape[0]
+    # x0 = np.sum(templ.points,axis=0)/templ.points.shape[0]
     dist, idx = tree.query(scan_short)
     templ_correspond = templ.points[idx]
     y0 = np.sum(scan_short,axis=0)/scan_short.shape[0]
@@ -40,6 +41,7 @@ for i in range(niter):
         H = np.add(H,np.outer(y_y0[idx] , x_x0[idx]))
     [U, D, Vt] = np.linalg.svd(H)
     R = np.dot(np.transpose(Vt), np.transpose(U))
+    R = R.T
     #R = np.dot(R,R.T)
     # print(np.linalg.det(R))
     #R = np.matmul(U, Vt)
