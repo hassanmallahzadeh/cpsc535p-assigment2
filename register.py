@@ -15,52 +15,31 @@ templ = pv.read(data_template)
 templ_orig = templ.copy()
 
 n = 8000#number of points to choose
-
-niter = 10
+y0 = np.sum(scan.points,axis=0)/scan.points.shape[0]
+x0 = np.sum(templ.points,axis=0)/templ.points.shape[0]
+templ.points = templ.points - x0 + y0 
+#scan_short = scan.extract_feature_edges(boundary_edges=True).points
+#scan_short = random.choices(scan_short.points, k=n)
+niter = 40
 for i in range(niter):
-    #scan_short = random.choices(scan.points, k=n)
-    #scan_short = scan.extract_feature_edges(boundary_edges=False).points
+ 
     scan_short = scan.points
     tree = KDTree(templ.points.astype(np.double))
-    # y0 = np.sum(scan.points,axis=0)/scan.points.shape[0]
-    # x0 = np.sum(templ.points,axis=0)/templ.points.shape[0]
     dist, idx = tree.query(scan_short)
     templ_correspond = templ.points[idx]
     y0 = np.sum(scan_short,axis=0)/scan_short.shape[0]
     x0 = np.sum(templ_correspond,axis=0)/templ_correspond.shape[0]
-    # print(y_y0[0,:])
-    # print(y0)
-    # print(scan_short[0,:])
     x_x0 = templ_correspond - x0
     y_y0 = scan_short - y0
-    # # test1 = x_x0[0,:]
-    # # print(np.transpose(test0))
-    # test2 = np.outer(test0,test1)
     H = np.zeros((3,3))
     for idx, x in enumerate(x_x0):
         H = np.add(H,np.outer(y_y0[idx] , x_x0[idx]))
     [U, D, Vt] = np.linalg.svd(H)
     R = np.dot(np.transpose(Vt), np.transpose(U))
     R = R.T
-    #R = np.dot(R,R.T)
-    # print(np.linalg.det(R))
-    #R = np.matmul(U, Vt)
-    #R = np.matmul(R,np.transpose(R))
-    #R = np.matmul(Vt, U)
-    #t = y0-np.matmul(R,x0)
-   # x0 = np.sum(templ.points, axis = 0)/templ.points.shape[0]
-    #y0 = np.array([y0])
-    # print(x0)
-    # print(templ.points[0])
-    # print((templ.points-x0)[0])
     y0 = np.array([y0])
-    # print(np.transpose(np.matmul(R,np.transpose(templ.points - x0)))[1])
-    # print(y0)
     x_new = np.transpose(np.matmul(R,np.transpose(templ.points - x0)))+y0
-   # print(x_new[1])
     templ.points = x_new
-# print('verex count in template: ',templ_short.)
-# print('verex count in scan: ',scan_short.points.size)
 # %% visualize data
 pl = pv.Plotter()
 mesht = pl.add_mesh(templ_orig, show_edges=True, color='gray', opacity=0.5)
